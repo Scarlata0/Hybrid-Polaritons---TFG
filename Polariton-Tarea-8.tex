@@ -1,0 +1,114 @@
+%% AMS-LaTeX Created with the Wolfram Language : www.wolfram.com
+
+\documentclass{article}
+\usepackage{amsmath, amssymb, graphics, setspace}
+
+\newcommand{\mathsym}[1]{{}}
+\newcommand{\unicode}[1]{{}}
+
+\newcounter{mathematicapage}
+\begin{document}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{e1},\text{e2},\text{wl1},\text{wl2},\text{wt1},\text{wt2},\text{eq1},\text{sols},\text{Omega1},\text{Omega2},\text{params}]}\\
+\pmb{\text{eq1}=}\\
+\pmb{\text{FullSimplify}[\text{Solve}[\{1+\text{r1}\text{==}\text{r2}+\text{t2},\text{Y1}(1-\text{r1})\text{==}\text{Y2}(\text{t2}-\text{r2}),\text{t2}*\text{Exp}[-d*\text{kx}]+\text{r2}*\text{Exp}[d*\text{kx}]\text{==}\text{t3}*\text{Exp}[-d*\text{kx}],}\\
+\pmb{\text{Y2}(\text{t2}*\text{Exp}[-d*\text{kx}]-\text{r2}*\text{Exp}[d*\text{kx}])\text{==}\text{Y3}*\text{t3}*\text{Exp}[-d*\text{kx}]\},\{\text{r1},\text{r2},\text{t2},\text{t3}\}]]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{\text{r1}\to \frac{(\text{Y1}+\text{Y2}) (\text{Y2}-\text{Y3})+e^{2 d \text{kx}} (\text{Y1}-\text{Y2}) (\text{Y2}+\text{Y3})}{(\text{Y1}-\text{Y2})
+(\text{Y2}-\text{Y3})+e^{2 d \text{kx}} (\text{Y1}+\text{Y2}) (\text{Y2}+\text{Y3})},\text{r2}\to \frac{2 \text{Y1} (\text{Y2}-\text{Y3})}{(\text{Y1}-\text{Y2})
+(\text{Y2}-\text{Y3})+e^{2 d \text{kx}} (\text{Y1}+\text{Y2}) (\text{Y2}+\text{Y3})},\text{t2}\to \frac{2 e^{2 d \text{kx}} \text{Y1} (\text{Y2}+\text{Y3})}{(\text{Y1}-\text{Y2})
+(\text{Y2}-\text{Y3})+e^{2 d \text{kx}} (\text{Y1}+\text{Y2}) (\text{Y2}+\text{Y3})},\text{t3}\to \frac{4 e^{2 d \text{kx}} \text{Y1} \text{Y2}}{(\text{Y1}-\text{Y2})
+(\text{Y2}-\text{Y3})+e^{2 d \text{kx}} (\text{Y1}+\text{Y2}) (\text{Y2}+\text{Y3})}\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{ }\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{e1},\text{wl1},\text{wl2},\text{wt1},\text{wt2},\text{eq1},\text{sols},\text{Omega1},\text{Omega2},\text{params},\text{einf2},\text{einf3},\text{wl3},\text{wt3},c,\text{kx},w,d,\text{arraysol}]}\\
+\pmb{}\\
+\pmb{\text{(*Definir funciones diel{\' e}ctricas*)}}\\
+\pmb{\text{e2}=\text{einf2}*(\text{wl2}{}^{\wedge}2-w{}^{\wedge}2)/(\text{wt2}{}^{\wedge}2-w{}^{\wedge}2);}\\
+\pmb{\text{e3}=\text{einf3}*(\text{wl3}{}^{\wedge}2-w{}^{\wedge}2)/(\text{wt3}{}^{\wedge}2-w{}^{\wedge}2);}\\
+\pmb{}\\
+\pmb{\text{(*Ecuaci{\' o}n de dispersi{\' o}n*)}}\\
+\pmb{\text{eq}=\text{Sinh}[\text{kx}*d]*(\text{e1}*\text{e3}+\text{e2}{}^{\wedge}2)+\text{Cosh}[\text{kx}*d]*(\text{e1}*\text{e2}+\text{e2}*\text{e3})\text{==}0;}\\
+\pmb{}\\
+\pmb{\left(\text{einf2} \text{einf3} \left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wl3}^2\right) \left(-w^2+\text{wt2}^2\right)+\text{e1} \text{einf2}
+\left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wt3}^2\right)\right) \text{Cosh}[d \text{kx}]+}\\
+\pmb{\left(\text{e1} \text{einf3} \left(-w^2+\text{wl3}^2\right) \left(-w^2+\text{wt2}^2\right)^2+\text{einf2}^2 \left(-w^2+\text{wl2}^2\right)^2
+\left(-w^2+\text{wt3}^2\right)\right) \text{Sinh}[d \text{kx}]==0}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left(\text{einf2} \text{einf3} \left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wl3}^2\right) \left(-w^2+\text{wt2}^2\right)+\text{e1}
+\text{einf2} \left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wt3}^2\right)\right) \text{Cosh}[d \text{kx}]+\left(\text{e1} \text{einf3} \left(-w^2+\text{wl3}^2\right)
+\left(-w^2+\text{wt2}^2\right)^2+\text{einf2}^2 \left(-w^2+\text{wl2}^2\right)^2 \left(-w^2+\text{wt3}^2\right)\right) \text{Sinh}[d \text{kx}]==0\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{expr1} =\text{Expand}\left[\left(\text{einf2} \text{einf3} \left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wl3}^2\right) \left(-w^2+\text{wt2}^2\right)+\text{e1}
+\text{einf2} \left(-w^2+\text{wl2}^2\right) \left(-w^2+\text{wt3}^2\right)\right) \right];}\\
+\pmb{\text{expr2} =\text{Expand}\left[\left(\text{e1} \text{einf3} \left(-w^2+\text{wl3}^2\right) \left(-w^2+\text{wt2}^2\right)^2+\text{einf2}^2
+\left(-w^2+\text{wl2}^2\right)^2 \left(-w^2+\text{wt3}^2\right)\right) \right];}\\
+\pmb{\text{newexpr1} = \text{Collect}[\text{expr1},w]}\\
+\pmb{\text{newexpr2} =\text{Collect}[\text{expr2},w]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(-\text{einf2} \text{einf3} w^6+\text{einf2} \text{einf3} \text{wl2}^2 \text{wl3}^2 \text{wt2}^2+w^4 \left(\text{e1} \text{einf2}+\text{einf2}
+\text{einf3} \text{wl2}^2+\text{einf2} \text{einf3} \text{wl3}^2+\text{einf2} \text{einf3} \text{wt2}^2\right)+\text{e1} \text{einf2} \text{wl2}^2
+\text{wt3}^2+w^2 \left(-\text{e1} \text{einf2} \text{wl2}^2-\text{einf2} \text{einf3} \text{wl2}^2 \text{wl3}^2-\text{einf2} \text{einf3} \text{wl2}^2
+\text{wt2}^2-\text{einf2} \text{einf3} \text{wl3}^2 \text{wt2}^2-\text{e1} \text{einf2} \text{wt3}^2\right)\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left(-\text{einf2}^2-\text{e1} \text{einf3}\right) w^6+\text{e1} \text{einf3} \text{wl3}^2 \text{wt2}^4+\text{einf2}^2 \text{wl2}^4 \text{wt3}^2+w^4
+\left(2 \text{einf2}^2 \text{wl2}^2+\text{e1} \text{einf3} \text{wl3}^2+2 \text{e1} \text{einf3} \text{wt2}^2+\text{einf2}^2 \text{wt3}^2\right)+w^2
+\left(-\text{einf2}^2 \text{wl2}^4-2 \text{e1} \text{einf3} \text{wl3}^2 \text{wt2}^2-\text{e1} \text{einf3} \text{wt2}^4-2 \text{einf2}^2 \text{wl2}^2
+\text{wt3}^2\right)\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{newequation} =\text{Collect}[ \text{newexpr1}*\text{Cosh}[\text{kx}*d]+\text{newexpr2}*\text{Sinh}[\text{kx}*d],w];}\\
+\pmb{\text{(*}\text{Constantes}\text{*)}}\\
+\pmb{\text{einf2}=2.1;}\\
+\pmb{\text{einf3}=2.5;}\\
+\pmb{\text{wl2}=\text{2.343262549732213*${}^{\wedge}$14};}\\
+\pmb{\text{wt2}=\text{1.9816014488089134*${}^{\wedge}$14};}\\
+\pmb{\text{wl3}=\text{1.7630978670010866*${}^{\wedge}$14};}\\
+\pmb{\text{wt3}=\text{1.4541790099624347*${}^{\wedge}$14};}\\
+\pmb{\text{e1}=1;}\\
+\pmb{d=0.4;}\\
+\pmb{}\\
+\pmb{\text{Coefficient}[\text{newequation},w,6]}\\
+\pmb{\text{Coefficient}[\text{newequation},w,4]}\\
+\pmb{\text{Coefficient}[\text{newequation},w,2]}\\
+\pmb{\text{Coefficient}[\text{newequation},w,0]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(-5.25 \text{Cosh}[0.4 \text{kx}]-6.91 \text{Sinh}[0.4 \text{kx}]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(6.57622\times 10^{29} \text{Cosh}[0.4 \text{kx}]+8.51601\times 10^{29} \text{Sinh}[0.4 \text{kx}]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(-2.66889\times 10^{58} \text{Cosh}[0.4 \text{kx}]-3.34951\times 10^{58} \text{Sinh}[0.4 \text{kx}]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(3.51874\times 10^{86} \text{Cosh}[0.4 \text{kx}]+4.00991\times 10^{86} \text{Sinh}[0.4 \text{kx}]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{}}\)
+\end{doublespace}
+
+\end{document}
