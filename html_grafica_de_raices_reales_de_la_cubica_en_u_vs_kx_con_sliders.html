@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hibridación de polaritones fonónicos superficiales — I & II (raíces reales)</title>
+  <style>
+    :root { --bg:#0b0d0f; --panel:#111418; --text:#e8eaed; --muted:#9aa0a6; --accent:#4dabf7; --accent-2:#94d82d; --accent-3:#ff8787; --axis:rgba(200,210,230,.6); --grid:rgba(120,140,170,.12); --warn:#ffb4a2; }
+    html, body { height: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; display: grid; grid-template-rows: auto 1fr; gap: 12px; padding: 16px; }
+    h1 { font-size: 18px; margin: 0 0 8px; font-weight: 700; letter-spacing: .2px; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn { border: 1px solid #263042; background:#0e141c; color:var(--text); padding:8px 12px; border-radius: 12px; cursor: pointer; font-size: 13px; user-select:none; }
+    .tab-btn[aria-selected="true"]{ background:#132032; border-color:#29405f; box-shadow: inset 0 0 0 1px #35537a; }
+
+    .app { display: none; grid-template-columns: 320px 1fr; gap: 16px; min-height: 0; }
+    .app.active { display: grid; }
+
+    .panel { background: var(--panel); border-radius: 16px; padding: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.25); display: grid; gap: 14px; align-content: start; }
+    .row { display: grid; gap: 6px; }
+    .row.inline { grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+    .label { font-size: 12px; color: var(--muted); }
+    .ctrl { display: grid; grid-template-columns: 1fr 90px; gap: 8px; align-items: center; }
+    input[type="range"] { width: 100%; }
+    input[type="number"] { width: 100%; background: #0e1115; color: var(--text); border: 1px solid #222832; border-radius: 10px; padding: 6px 8px; }
+    .note { font-size: 12px; line-height: 1.35; color: var(--muted); }
+    .warn { color: var(--warn); font-size: 12px; }
+    .toggle { display:flex; align-items:center; gap:.6rem; font-size:13px; }
+
+    .plot-wrap { background: var(--panel); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); position: relative; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .legend { position: absolute; right: 14px; top: 12px; background: rgba(10,12,14,.72); backdrop-filter: blur(6px); border: 1px solid #1f2630; border-radius: 12px; padding: 8px 10px; font-size: 12px; display: grid; gap: 6px; }
+    .legend .item { display: grid; grid-template-columns: 16px 1fr; gap: 8px; align-items: center; white-space: nowrap; }
+    .sw { width: 16px; height: 2px; border-radius: 2px; }
+    .sw.r1 { background: var(--accent); } .sw.r2 { background: var(--accent-2); } .sw.r3 { background: var(--accent-3); }
+    .legend small { color: var(--muted); }
+
+    .footer { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .btn { cursor: pointer; user-select: none; border: 1px solid #263042; background: #0e141c; color: var(--text); padding: 6px 10px; border-radius: 10px; font-size: 12px; }
+    .btn:hover { background: #101820; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hibridación de polaritones fonónicos superficiales — I & II</h1>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" id="t1" aria-controls="p1" aria-selected="true">I · Lámina de material polar sobre sustrato polar</button>
+      <button class="tab-btn" role="tab" id="t2" aria-controls="p2" aria-selected="false">II · Lámina polar sobre lámina polar (espesor h) sobre conductor perfecto</button>
+    </div>
+  </header>
+
+  <!-- TAB I -->
+  <div class="app active" id="p1" role="tabpanel" aria-labelledby="t1">
+    <section class="panel">
+      <div class="label"><strong>I) Hibridación de polaritones fonónicos superficiales:</strong> Lámina de material polar de espesor <em>d</em> sobre sustrato polar infinito.</div>
+      <div class="row">
+        <div class="label">Espesor de lámina <strong>d</strong></div>
+        <div class="ctrl">
+          <input id="i_dRange" type="range" min="0" max="10" step="0.01" value="1" />
+          <input id="i_dNum"   type="number" step="0.01" value="1" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">Máximo de número de onda <strong>kₓ</strong> (eje x)</div>
+        <div class="ctrl">
+          <input id="i_kxRange" type="range" min="0.1" max="10" step="0.01" value="3" />
+          <input id="i_kxNum"   type="number" step="0.01" value="3" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">Resolución (muestras en kₓ)</div>
+        <div class="ctrl">
+          <input id="i_nRange" type="range" min="50" max="2000" step="10" value="600" />
+          <input id="i_nNum"   type="number" step="10" value="600" />
+        </div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input id="i_autoY" type="checkbox" checked/> Autoscale robusto en Y (ignora ~2% extremos)</label>
+        <div class="label">Límites Y (si desactivas autoscale)</div>
+        <div class="ctrl">
+          <input id="i_ymin" type="number" step="0.1" value="-3" />
+          <input id="i_ymax" type="number" step="0.1" value="3" />
+        </div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input id="i_showDelta" type="checkbox"/> Marcar Δ(kₓ)=0</label>
+        <label class="toggle"><input id="i_showAsym" type="checkbox"/> Mostrar asintotas (kₓ→0, ∞)</label>
+      </div>
+      <div class="row inline">
+        <button class="btn" id="i_recalc">Recalcular</button>
+        <span class="warn" id="i_warn"></span>
+      </div>
+      <div class="note">
+        Ecuación (cúbica en <em>u</em>):
+        <code>c₃ u³ + c₂ u² + c₁ u + c₀ = 0</code>, con
+        <code>c₃ = -5.25 cosh(d kₓ) - 8.35 sinh(d kₓ)</code>,
+        <code>c₂ = 2.7436933614498824 cosh(d kₓ) + 0.363104833922748 sinh(d kₓ)</code>,
+        <code>c₁ = -0.07967332363150799 cosh(d kₓ) - 0.005089091667284592 sinh(d kₓ)</code>,
+        <code>c₀ = 0.0005881902694748172 cosh(d kₓ) + 0.00002347772504354553 sinh(d kₓ)</code>.
+      </div>
+    </section>
+    <section class="plot-wrap">
+      <canvas id="i_plot"></canvas>
+      <div class="legend">
+        <div class="item"><span class="sw r1"></span><span>raíz 1 <small>(menor)</small></span></div>
+        <div class="item"><span class="sw r2"></span><span>raíz 2</span></div>
+        <div class="item"><span class="sw r3"></span><span>raíz 3 <small>(mayor)</small></span></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB II -->
+  <div class="app" id="p2" role="tabpanel" aria-labelledby="t2">
+    <section class="panel">
+      <div class="label"><strong>II) Lámina polar (d) sobre lámina polar (h), sobre conductor perfecto.</strong> Estudiar el caso límite <em>h → ∞</em>.</div>
+      <div class="row">
+        <div class="label">Espesor <strong>d</strong></div>
+        <div class="ctrl">
+          <input id="ii_dRange" type="range" min="0" max="10" step="0.01" value="1" />
+          <input id="ii_dNum"   type="number" step="0.01" value="1" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">Espesor <strong>h</strong></div>
+        <div class="ctrl">
+          <input id="ii_hRange" type="range" min="0" max="10" step="0.01" value="1" />
+          <input id="ii_hNum"   type="number" step="0.01" value="1" />
+        </div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input id="ii_limitH" type="checkbox" /> Modo límite <strong>h → ∞</strong> (aprox., usa h efectivo grande)</label>
+      </div>
+      <div class="row">
+        <div class="label">Máximo de número de onda <strong>kₓ</strong> (eje x)</div>
+        <div class="ctrl">
+          <input id="ii_kxRange" type="range" min="0.1" max="10" step="0.01" value="3" />
+          <input id="ii_kxNum"   type="number" step="0.01" value="3" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">Resolución (muestras en kₓ)</div>
+        <div class="ctrl">
+          <input id="ii_nRange" type="range" min="50" max="2000" step="10" value="600" />
+          <input id="ii_nNum"   type="number" step="10" value="600" />
+        </div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input id="ii_autoY" type="checkbox" checked/> Autoscale robusto en Y (ignora ~2% extremos)</label>
+        <div class="label">Límites Y (si desactivas autoscale)</div>
+        <div class="ctrl">
+          <input id="ii_ymin" type="number" step="0.1" value="-3" />
+          <input id="ii_ymax" type="number" step="0.1" value="3" />
+        </div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input id="ii_showDelta" type="checkbox"/> Marcar Δ(kₓ)=0</label>
+        <label class="toggle"><input id="ii_showAsym" type="checkbox"/> Mostrar asintotas (kₓ→0, ∞)</label>
+      </div>
+      <div class="row inline">
+        <button class="btn" id="ii_recalc">Recalcular</button>
+        <span class="warn" id="ii_warn"></span>
+      </div>
+      <div class="note">
+        Ecuación (cúbica en <em>u</em>):
+        <code>c₃ u³ + c₂ u² + c₁ u + c₀ = 0</code>, donde, definiendo
+        <code>A = e^{2 d kₓ}</code>, <code>B = e^{4 d kₓ} = A²</code>, <code>C = e^{2 h kₓ}</code>, <code>D = e^{2 (d+h) kₓ} = A·C</code>,
+        se tiene:
+        <div style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height:1.35; background:#0e1216; padding:8px; border-radius:8px; border:1px solid #1f2630;">
+          c₀ = 2.52535·10⁻⁵·A - 4.92987·10⁻⁶·B - 2.82083·10⁻⁶·C + 4.41346·10⁻⁵·D<br/>
+          c₁ = -5.10889·10⁻³·A + 7.02827·10⁻⁴·B + 3.44293·10⁻⁴·C - 9.83389·10⁻³·D<br/>
+          c₂ = 3.30825·10⁻¹·A - 4.16448·10⁻²·B - 2.03083·10⁻²·C + 7.05901·10⁻¹·D<br/>
+          c₃ = -6.9·A + 1.4·B + 0.6·C - 16.1·D
+        </div>
+        Para evitar overflow numérico se usa un escalado log-sum-exp: las raíces no cambian bajo un factor común.
+      </div>
+    </section>
+    <section class="plot-wrap">
+      <canvas id="ii_plot"></canvas>
+      <div class="legend">
+        <div class="item"><span class="sw r1"></span><span>raíz 1 <small>(menor)</small></span></div>
+        <div class="item"><span class="sw r2"></span><span>raíz 2</span></div>
+        <div class="item"><span class="sw r3"></span><span>raíz 3 <small>(mayor)</small></span></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // -------------- Utilidades compartidas --------------
+    function bindPair(range, number, onChange) { const sync = (from, to) => () => { to.value = from.value; onChange(); }; range.addEventListener('input', sync(range, number)); number.addEventListener('input', sync(number, range)); }
+    function cbrt(x) { return x < 0 ? -Math.pow(-x, 1/3) : Math.pow(x, 1/3); }
+    function solveCubic(a, b, c, d) {
+      if (!isFinite(a) || Math.abs(a) < 1e-30) { const A=b, B=c, C=d; if (!isFinite(A) || Math.abs(A) < 1e-30) return (Math.abs(B) < 1e-30) ? [] : [-C/B]; const D=B*B-4*A*C; if (D<0) return []; if (Math.abs(D)<1e-14) return [-B/(2*A)]; const s=Math.sqrt(D); return [(-B-s)/(2*A), (-B+s)/(2*A)].sort((x,y)=>x-y); }
+      const inva=1/a, bb=b*inva, cc=c*inva, dd=d*inva; const p=(3*cc-bb*bb)/3, q=(2*bb*bb*bb-9*bb*cc+27*dd)/27; const disc=(q*q)/4 + (p*p*p)/27, shift=bb/3; const roots=[];
+      if (disc>1e-18){ const s=Math.sqrt(disc); const u=cbrt(-q/2+s), v=cbrt(-q/2-s); roots.push(u+v-shift); }
+      else if (Math.abs(disc)<=1e-18){ const u=cbrt(-q/2); roots.push(2*u-shift, -u-shift); }
+      else { const r=Math.sqrt(-p/3), phi=Math.acos(Math.max(-1,Math.min(1,-q/(2*r*r*r)))); const t=2*r; roots.push(t*Math.cos(phi/3)-shift, t*Math.cos((phi+2*Math.PI)/3)-shift, t*Math.cos((phi+4*Math.PI)/3)-shift); }
+      roots.sort((x,y)=>x-y); return roots.filter(Number.isFinite);
+    }
+    function niceTicks(min, max, maxTicks=8){ if (!isFinite(min)||!isFinite(max)||min===max) return {ticks:[min],step:1}; const span=Math.abs(max-min), step0=span/Math.max(1,maxTicks); const mag=Math.pow(10,Math.floor(Math.log10(step0))), cands=[1,2,2.5,5,10]; let step=cands[0]*mag; for(const k of cands){ const s=k*mag; if(Math.abs(s-step0)<Math.abs(step-step0)) step=s; } const niceMin=Math.floor(min/step)*step, niceMax=Math.ceil(max/step)*step, ticks=[]; for(let v=niceMin; v<=niceMax+0.5*step; v+=step) ticks.push(v); return {ticks, step}; }
+    function formatNum(v){ if(!isFinite(v)) return ''; const a=Math.abs(v); if(a>=1e5||(a>0&&a<1e-3)) return v.toExponential(1); if(a>=100) return v.toFixed(0); if(a>=10) return v.toFixed(1); return v.toFixed(2); }
+
+    function resizeCanvas(canvas){ const ctx=canvas.getContext('2d'); const rect=canvas.parentElement.getBoundingClientRect(); const dpr=Math.min(2, window.devicePixelRatio||1); canvas.width=Math.floor(rect.width*dpr); canvas.height=Math.floor(Math.max(360, rect.height)*dpr); canvas.style.height=Math.max(360, rect.height)+'px'; canvas.style.width=rect.width+'px'; ctx.setTransform(dpr,0,0,dpr,0,0); return {W:rect.width, H:Math.max(360, rect.height), ctx}; }
+    function drawAxes(ctx, dims, xmin, xmax, ymin, ymax){ const {W,H}=dims; const padL=64, padR=20, padT=20, padB=48; ctx.clearRect(0,0,W,H); ctx.fillStyle='#0a0c0e'; ctx.fillRect(0,0,W,H); ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--grid'); ctx.lineWidth=1; const xTicks=niceTicks(xmin,xmax,8).ticks, yTicks=niceTicks(ymin,ymax,8).ticks; for(const xv of xTicks){ const x=padL + (xv-xmin)/(xmax-xmin)*(W-padL-padR); ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); } for(const yv of yTicks){ const y=padT + (ymax-yv)/(ymax-ymin)*(H-padT-padB); ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke(); } ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--axis'); ctx.lineWidth=1.2; ctx.strokeRect(64,20,W-64-20,H-20-48); ctx.fillStyle='#cdd6e3'; ctx.font='12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial'; ctx.textAlign='center'; for(const xv of xTicks){ const x=padL + (xv-xmin)/(xmax-xmin)*(W-padL-padR); ctx.fillText(formatNum(xv), x, H-padB+18); } ctx.textAlign='right'; for(const yv of yTicks){ const y=padT + (ymax-yv)/(ymax-ymin)*(H-padT-padB); ctx.fillText(formatNum(yv), 64-8, y+4); } ctx.fillStyle='#9aa0a6'; ctx.textAlign='center'; ctx.fillText('kₓ', 64+(W-64-20)/2, H-16); ctx.save(); ctx.translate(16, 20+(H-20-48)/2); ctx.rotate(-Math.PI/2); ctx.fillText('u (raíces reales)', 0, 0); ctx.restore(); return {padL, padR, padT, padB}; }
+    function drawLines(ctx, dims, pads, xmin, xmax, ymin, ymax, curves){ const {W,H}=dims; const {padL, padR, padT, padB}=pads; const colors=['#4dabf7','#94d82d','#ff8787']; for(let ci=0;ci<curves.length;ci++){ const pts=curves[ci]; ctx.lineWidth=2.0; ctx.strokeStyle=colors[ci%colors.length]; ctx.setLineDash([]); ctx.beginPath(); let penDown=false; for(const p of pts){ if(!p||!isFinite(p.y)){ penDown=false; continue; } const x=padL+(p.x-xmin)/(xmax-xmin)*(W-padL-padR); const y=padT+(ymax-p.y)/(ymax-ymin)*(H-padT-padB); if(!penDown){ ctx.moveTo(x,y); penDown=true; } else { ctx.lineTo(x,y); } } ctx.stroke(); } }
+    function drawVerticals(ctx, dims, pads, xmin, xmax, ymin, ymax, xs){ if(!xs||!xs.length) return; const {W,H}=dims; const {padL, padR, padT, padB}=pads; ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.35)'; ctx.setLineDash([6,4]); ctx.lineWidth=1.2; for(const xv of xs){ if(!isFinite(xv)) continue; const x=padL+(xv-xmin)/(xmax-xmin)*(W-padL-padR); ctx.beginPath(); ctx.moveTo(x,padT); ctx.lineTo(x,H-padB); ctx.stroke(); } ctx.restore(); }
+    function drawHorizontals(ctx, dims, pads, xmin, xmax, ymin, ymax, ys){ if(!ys||!ys.length) return; const {W,H}=dims; const {padL, padR, padT, padB}=pads; ctx.save(); ctx.setLineDash([6,6]); ctx.lineWidth=1.2; ctx.strokeStyle='rgba(180,200,255,0.5)'; for(const yv of ys){ if(!isFinite(yv)) continue; const y=padT+(ymax-yv)/(ymax-ymin)*(H-padT-padB); ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke(); } ctx.restore(); }
+
+    function collectFinite(arrs){ const out=[]; for(const a of arrs){ for(const v of a){ if(Number.isFinite(v)) out.push(v); } } return out; }
+    function quantile(sorted, q){ if(sorted.length===0) return NaN; const pos=(sorted.length-1)*q; const base=Math.floor(pos), rest=pos-base; if(sorted[base+1]!==undefined) return sorted[base]+rest*(sorted[base+1]-sorted[base]); return sorted[base]; }
+    function extentRobust(arrs){ const all=collectFinite(arrs); if(all.length===0) return [-1,1]; all.sort((a,b)=>a-b); if(all.length<50){ const lo=all[0], hi=all[all.length-1]; const pad=0.08*(hi-lo || 1); return [lo-pad, hi+pad]; } const lo=quantile(all,0.02), hi=quantile(all,0.98); const pad=0.08*(hi-lo || 1); return [lo-pad, hi+pad]; }
+
+    // Discriminante de cúbica
+    function discriminant(a,b,c,d){ return 18*a*b*c*d - 4*b*b*b*d + b*b*c*c - 4*a*c*c*c - 27*a*a*d*d; }
+    function deltaCrossings(xs, deltas){ const out=[]; for(let i=1;i<xs.length;i++){ const d0=deltas[i-1], d1=deltas[i]; if(!isFinite(d0)||!isFinite(d1)) continue; if(d0===0){ out.push(xs[i-1]); continue;} if(d1===0){ out.push(xs[i]); continue;} if(d0*d1<0){ const t = Math.abs(d0)/(Math.abs(d0)+Math.abs(d1)); const x = xs[i-1] + t*(xs[i]-xs[i-1]); out.push(x); } } return out; }
+
+    // Asintotas horizontales a kx->0 y kx->infty (raíces reales de las cúbicas límite)
+    function realRoots(arr){ return arr.filter(Number.isFinite); }
+
+    // -------------- Continuidad de ramas --------------
+    function assignByContinuity(prev, roots){
+      // prev: [y1prev,y2prev,y3prev] (pueden ser NaN); roots: array sorted
+      const P = prev.map(v=>Number.isFinite(v));
+      if(roots.length===3){
+        const perms=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]; let best=null, bestCost=Infinity;
+        for(const pm of perms){ let cost=0; for(let j=0;j<3;j++){ if(P[j]) cost += Math.abs(roots[pm[j]]-prev[j]); } if(cost<bestCost){ bestCost=cost; best=pm; } }
+        return [roots[best[0]], roots[best[1]], roots[best[2]]];
+      } else if(roots.length===2){
+        const slots=[[0,1],[0,2],[1,2]]; let best=null, bestCost=Infinity, bestVals=[NaN,NaN,NaN];
+        for(const sl of slots){ const i0=sl[0], i1=sl[1]; const opts=[[roots[0],roots[1]],[roots[1],roots[0]]]; for(const v of opts){ const arr=[NaN,NaN,NaN]; arr[i0]=v[0]; arr[i1]=v[1]; let cost=0; for(let j=0;j<3;j++){ if(P[j] && Number.isFinite(arr[j])) cost += Math.abs(arr[j]-prev[j]); } if(cost<bestCost){ bestCost=cost; bestVals=arr; } } }
+        return bestVals;
+      } else if(roots.length===1){
+        // Mapea al slot más cercano
+        let jBest=1, cBest=Infinity; for(let j=0;j<3;j++){ if(P[j]){ const c=Math.abs(roots[0]-prev[j]); if(c<cBest){ cBest=c; jBest=j; } } }
+        const arr=[NaN,NaN,NaN]; arr[jBest]=roots[0]; return arr;
+      } else { return [NaN,NaN,NaN]; }
+    }
+
+    // -------------- TAB I (cosh/sinh) --------------
+    const I = { els: { dR: document.getElementById('i_dRange'), dN: document.getElementById('i_dNum'), kR: document.getElementById('i_kxRange'), kN: document.getElementById('i_kxNum'), nR: document.getElementById('i_nRange'), nN: document.getElementById('i_nNum'), autoY: document.getElementById('i_autoY'), ymin: document.getElementById('i_ymin'), ymax: document.getElementById('i_ymax'), showDelta: document.getElementById('i_showDelta'), showAsym: document.getElementById('i_showAsym'), warn: document.getElementById('i_warn'), canvas: document.getElementById('i_plot'), recalc: document.getElementById('i_recalc') } };
+    bindPair(I.els.dR, I.els.dN, scheduleI); bindPair(I.els.kR, I.els.kN, scheduleI); bindPair(I.els.nR, I.els.nN, scheduleI); I.els.autoY.addEventListener('change', scheduleI); I.els.ymin.addEventListener('input', scheduleI); I.els.ymax.addEventListener('input', scheduleI); I.els.recalc.addEventListener('click', scheduleI); I.els.showDelta.addEventListener('change', scheduleI); I.els.showAsym.addEventListener('change', scheduleI);
+
+    function coeffsI(d, kx){ const x=d*kx, C=Math.cosh(x), S=Math.sinh(x); return [ -5.25*C - 8.35*S, 2.7436933614498824*C + 0.363104833922748*S, -0.07967332363150799*C - 0.005089091667284592*S, 0.0005881902694748172*C + 0.00002347772504354553*S ]; }
+    function computeCurvesI(d, kxMax, N){ const xs=Array.from({length:N},(_,i)=>i/(N-1)*kxMax); const y1=Array(N).fill(NaN), y2=Array(N).fill(NaN), y3=Array(N).fill(NaN); let prev=[NaN,NaN,NaN]; for(let i=0;i<N;i++){ const kx=xs[i]; const [a,b,c,d0]=coeffsI(d,kx); let roots=solveCubic(a,b,c,d0); const assigned=assignByContinuity(prev, roots); y1[i]=assigned[0]; y2[i]=assigned[1]; y3[i]=assigned[2]; prev=assigned; } return {xs, y1, y2, y3}; }
+    function asymI_k0(){ // kx->0: C=1, S=0
+      const a=-5.25, b=2.7436933614498824, c=-0.07967332363150799, d=0.0005881902694748172; return solveCubic(a,b,c,d); }
+    function asymI_kinf(){ // kx->inf: cosh~sinh, factor común se cancela
+      const a=-13.6, b=3.1067981953726304, c=-0.08476241529879258, d=0.0006116679945183627; return solveCubic(a,b,c,d); }
+
+    let rafI=0; function scheduleI(){ if(rafI) cancelAnimationFrame(rafI); rafI=requestAnimationFrame(updateI); }
+    function updateI(){ rafI=0; const {canvas,warn,autoY,ymin,ymax,dN,kN,nN,showDelta,showAsym}=I.els; const dims=resizeCanvas(canvas); const d=parseFloat(dN.value); const kxMax=Math.max(1e-6, parseFloat(kN.value)); const N=Math.max(10, Math.floor(parseFloat(nN.value))|0);
+      const {xs,y1,y2,y3}=computeCurvesI(d,kxMax,N);
+      // Autoscale
+      let ylo,yhi; if(autoY.checked){ [ylo,yhi]=extentRobust([y1,y2,y3]); ymin.value=ylo.toFixed(3); ymax.value=yhi.toFixed(3); } else { ylo=parseFloat(ymin.value); yhi=parseFloat(ymax.value); if(!(yhi>ylo)){ yhi=ylo+1; ymax.value=yhi.toFixed(3); } }
+      const pads=drawAxes(dims.ctx, dims, 0, kxMax, ylo, yhi);
+      // Δ(kx)
+      let xZeros=[]; if(showDelta.checked){ const deltas=xs.map(kx=>{ const [a,b,c,d0]=coeffsI(d,kx); return discriminant(a,b,c,d0); }); xZeros=deltaCrossings(xs,deltas); }
+      // Asintotas
+      let yAsym=[]; if(showAsym.checked){ yAsym = [].concat(asymI_k0(), asymI_kinf()); }
+      drawLines(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, [y1.map((y,i)=>y!=null?{x:xs[i],y}:null), y2.map((y,i)=>y!=null?{x:xs[i],y}:null), y3.map((y,i)=>y!=null?{x:xs[i],y}:null)]);
+      drawVerticals(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, xZeros);
+      drawHorizontals(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, yAsym);
+      const prod=d*kxMax; warn.textContent=(prod>25)?`Aviso: d·kₓ_max = ${prod.toFixed(2)} ⇒ cosh/sinh crecen mucho; reduce rangos si ves inestabilidad.`:'';
+    }
+
+    // -------------- TAB II (exp escalado) --------------
+    const II = { els: { dR: document.getElementById('ii_dRange'), dN: document.getElementById('ii_dNum'), hR: document.getElementById('ii_hRange'), hN: document.getElementById('ii_hNum'), limitH: document.getElementById('ii_limitH'), kR: document.getElementById('ii_kxRange'), kN: document.getElementById('ii_kxNum'), nR: document.getElementById('ii_nRange'), nN: document.getElementById('ii_nNum'), autoY: document.getElementById('ii_autoY'), ymin: document.getElementById('ii_ymin'), ymax: document.getElementById('ii_ymax'), showDelta: document.getElementById('ii_showDelta'), showAsym: document.getElementById('ii_showAsym'), warn: document.getElementById('ii_warn'), canvas: document.getElementById('ii_plot'), recalc: document.getElementById('ii_recalc') } };
+    bindPair(II.els.dR, II.els.dN, scheduleII); bindPair(II.els.hR, II.els.hN, scheduleII); bindPair(II.els.kR, II.els.kN, scheduleII); bindPair(II.els.nR, II.els.nN, scheduleII); II.els.autoY.addEventListener('change', scheduleII); II.els.ymin.addEventListener('input', scheduleII); II.els.ymax.addEventListener('input', scheduleII); II.els.recalc.addEventListener('click', scheduleII); II.els.limitH.addEventListener('change', scheduleII); II.els.showDelta.addEventListener('change', scheduleII); II.els.showAsym.addEventListener('change', scheduleII);
+
+    // Coeficientes con estabilización log-sum-exp (se preserva el signo de Δ)
+    function coeffsII(d, h, kx){ const la = 2*d*kx, lb = 4*d*kx, lc = 2*h*kx, ld = la + lc; const m = Math.max(0, la, lb, lc, ld); const A = Math.exp(la - m), B = Math.exp(lb - m), C = Math.exp(lc - m), D = Math.exp(ld - m); const c0 =  2.52535e-5*A - 4.92987e-6*B - 2.82083e-6*C + 4.41346e-5*D; const c1 = -5.10889e-3*A + 7.02827e-4*B + 3.44293e-4*C - 9.83389e-3*D; const c2 =  3.30825e-1*A - 4.16448e-2*B - 2.03083e-2*C + 7.05901e-1*D; const c3 = -6.9*A + 1.4*B + 0.6*C - 16.1*D; return [c3, c2, c1, c0]; }
+    function computeCurvesII(d, h, kxMax, N){ const xs=Array.from({length:N},(_,i)=>i/(N-1)*kxMax); const y1=Array(N).fill(NaN), y2=Array(N).fill(NaN), y3=Array(N).fill(NaN); let prev=[NaN,NaN,NaN]; for(let i=0;i<N;i++){ const kx=xs[i]; const [a,b,c,d0]=coeffsII(d,h,kx); let roots=solveCubic(a,b,c,d0); const assigned=assignByContinuity(prev, roots); y1[i]=assigned[0]; y2[i]=assigned[1]; y3[i]=assigned[2]; prev=assigned; } return {xs, y1, y2, y3}; }
+
+    function asymII_k0(){ // kx->0: A=B=C=D=1
+      const a=-6.9 + 1.4 + 0.6 - 16.1; // c3
+      const b= 0.330825 - 0.0416448 - 0.0203083 + 0.705901; // c2
+      const c= -0.00510889 + 0.000702827 + 0.000344293 - 0.00983389; // c1
+      const d= 0.0000252535 - 4.92987e-6 - 2.82083e-6 + 0.0000441346; // c0
+      return solveCubic(a,b,c,d);
+    }
+    function asymII_kinf(d,h){ // kx->inf: domina B si 4d>2(d+h); domina D si 4d<2(d+h); ambos si ==
+      const sB = 4*d, sD = 2*(d+h);
+      let a,b,c,d0;
+      if (sB > sD){ a= 1.4; b=-0.0416448; c= 0.000702827; d0= -4.92987e-6; }
+      else if (sB < sD){ a=-16.1; b= 0.705901; c=-0.00983389; d0= 0.0000441346; }
+      else { a= 1.4-16.1; b= -0.0416448+0.705901; c= 0.000702827-0.00983389; d0= -4.92987e-6+0.0000441346; }
+      return solveCubic(a,b,c,d0);
+    }
+
+    let rafII=0; function scheduleII(){ if(rafII) cancelAnimationFrame(rafII); rafII=requestAnimationFrame(updateII); }
+    function updateII(){ rafII=0; const {canvas,warn,autoY,ymin,ymax,dN,hN,kN,nN,limitH,showDelta,showAsym}=II.els; const dims=resizeCanvas(canvas); let d=parseFloat(dN.value); let h=parseFloat(hN.value); const kxMax=Math.max(1e-6, parseFloat(kN.value)); const N=Math.max(10, Math.floor(parseFloat(nN.value))|0); if(limitH.checked){ h = Math.max(h, 50); }
+      const {xs,y1,y2,y3}=computeCurvesII(d,h,kxMax,N);
+      let ylo,yhi; if(autoY.checked){ [ylo,yhi]=extentRobust([y1,y2,y3]); ymin.value=ylo.toFixed(3); ymax.value=yhi.toFixed(3); } else { ylo=parseFloat(ymin.value); yhi=parseFloat(ymax.value); if(!(yhi>ylo)){ yhi=ylo+1; ymax.value=yhi.toFixed(3); } }
+      const pads=drawAxes(dims.ctx, dims, 0, kxMax, ylo, yhi);
+      // Δ(kx)
+      let xZeros=[]; if(showDelta.checked){ const deltas=xs.map(kx=>{ const [a,b,c,d0]=coeffsII(d,h,kx); return discriminant(a,b,c,d0); }); xZeros=deltaCrossings(xs,deltas); }
+      // Asintotas
+      let yAsym=[]; if(showAsym.checked){ yAsym = [].concat(asymII_k0(), asymII_kinf(d,h)); }
+      drawLines(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, [y1.map((y,i)=>y!=null?{x:xs[i],y}:null), y2.map((y,i)=>y!=null?{x:xs[i],y}:null), y3.map((y,i)=>y!=null?{x:xs[i],y}:null)]);
+      drawVerticals(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, xZeros);
+      drawHorizontals(dims.ctx, dims, pads, 0, kxMax, ylo, yhi, yAsym);
+      const prod1=d*kxMax, prod2=h*kxMax; warn.textContent=(prod1>60||prod2>60)?`Aviso: d·kₓ_max=${prod1.toFixed(2)}, h·kₓ_max=${prod2.toFixed(2)} ⇒ e^{…} enormes; se aplica escalado log-sum-exp, pero ajusta rangos si notas inestabilidad.`:'';
+    }
+
+    // -------------- Pestañas --------------
+    const t1=document.getElementById('t1'), t2=document.getElementById('t2'); const p1=document.getElementById('p1'), p2=document.getElementById('p2');
+    function activate(tab){ if(tab==='1'){ t1.setAttribute('aria-selected','true'); t2.setAttribute('aria-selected','false'); p1.classList.add('active'); p2.classList.remove('active'); scheduleI(); } else { t1.setAttribute('aria-selected','false'); t2.setAttribute('aria-selected','true'); p1.classList.remove('active'); p2.classList.add('active'); scheduleII(); } }
+    t1.addEventListener('click', ()=>activate('1')); t2.addEventListener('click', ()=>activate('2'));
+    window.addEventListener('resize', ()=>{ if(p1.classList.contains('active')) scheduleI(); if(p2.classList.contains('active')) scheduleII(); });
+
+    // Primera render
+    activate('1');
+  </script>
+</body>
+</html>
